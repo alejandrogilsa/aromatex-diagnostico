@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aromatex · Diagnóstico Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#1a4a35;--verde-m:#2d6b4f;--verde-c:#4a9070;--crema:#f5f0e8;--blanco:#ffffff;--gris:#f0ece4;--texto:#1a2018;--texto-s:#4a5545;--oro:#c4a35a;--oro-s:#e8d5a3;--rojo:#c0392b;--rojo-s:#fdf0ef;--amarillo:#fff8e1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--crema);color:var(--texto);min-height:100vh;}
+/* ACCESO */
+#pantalla-acceso{position:fixed;inset:0;background:var(--verde);z-index:999;display:flex;align-items:center;justify-content:center;}
+.acc-box{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:48px 44px;width:100%;max-width:420px;text-align:center;}
+.acc-logo{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--crema);margin-bottom:4px;}
+.acc-tipo{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--oro-s);margin-bottom:4px;}
+.acc-sub{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,232,0.3);margin-bottom:32px;}
+.acc-lbl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--oro-s);display:block;margin-bottom:8px;text-align:left;}
+.acc-inp{width:100%;padding:13px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:var(--crema);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;margin-bottom:14px;}
+.acc-inp::placeholder{color:rgba(245,240,232,0.3);}
+.acc-inp:focus{border-color:var(--oro);}
+.acc-btn{width:100%;padding:14px;background:var(--oro);color:var(--verde);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:pointer;text-transform:uppercase;transition:all 0.2s;}
+.acc-btn:hover{background:#d4b36a;}
+.acc-err{font-size:12px;color:#f1948a;margin-top:10px;display:none;}
+.acc-usado{font-size:13px;color:#f1948a;margin-top:12px;display:none;line-height:1.6;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+/* REGISTRO */
+#pantalla-registro{min-height:100vh;display:none;align-items:center;justify-content:center;padding:40px 20px;}
+.reg-card{background:var(--blanco);border-radius:20px;max-width:560px;width:100%;overflow:hidden;box-shadow:0 8px 40px rgba(26,74,53,0.12);}
+.reg-head{background:var(--verde);padding:36px 40px;}
+.reg-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--oro-s);margin-bottom:10px;}
+.reg-head h1{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--crema);line-height:1.15;margin-bottom:10px;}
+.reg-head h1 em{font-style:italic;}
+.reg-head p{font-size:13px;color:rgba(245,240,232,0.6);line-height:1.6;font-weight:300;}
+.reg-body{padding:36px 40px;}
+.bienvenida-box{background:rgba(26,74,53,0.06);border:1px solid rgba(26,74,53,0.12);border-radius:10px;padding:16px 20px;margin-bottom:22px;}
+.bienvenida-nombre{font-size:18px;font-weight:600;color:var(--verde);margin-bottom:3px;}
+.bienvenida-sub{font-size:12px;color:var(--texto-s);font-weight:300;}
+.aviso{background:var(--amarillo);border:1px solid var(--oro);border-radius:10px;padding:14px 18px;font-size:12px;color:#7a5c00;line-height:1.7;margin-bottom:24px;}
+.btn-inicio{width:100%;padding:16px;background:var(--verde);color:var(--crema);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;}
+.btn-inicio:hover{background:var(--verde-m);transform:translateY(-1px);}
+/* EXAMEN */
+#pantalla-examen{display:none;min-height:100vh;}
+.ex-header{background:var(--verde);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:50;}
+.ex-marca{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--crema);}
+.ex-centro{flex:1;max-width:340px;}
+.ex-prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:rgba(245,240,232,0.5);margin-bottom:5px;}
+.ex-prog-track{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;}
+.ex-prog-fill{height:100%;background:var(--oro);border-radius:2px;width:0%;transition:width 0.5s;}
+/* TIMER */
+.timer-svg{transform:rotate(-90deg);}
+.timer-bg{fill:none;stroke:rgba(255,255,255,0.1);stroke-width:4;}
+.timer-arc{fill:none;stroke:var(--oro);stroke-width:4;stroke-linecap:round;stroke-dasharray:126;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+.timer-num{font-size:13px;font-weight:700;fill:var(--crema);text-anchor:middle;dominant-baseline:central;font-family:'DM Sans',sans-serif;}
+/* CUERPO PREGUNTA */
+.ex-body{max-width:760px;margin:0 auto;padding:44px 24px 80px;}
+.cat-badge{display:inline-block;background:rgba(26,74,53,0.08);color:var(--verde);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+.q-txt{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--verde);line-height:1.35;margin-bottom:28px;}
+.ops{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.op-btn{width:100%;text-align:left;padding:15px 20px;border:1.5px solid rgba(26,74,53,0.14);border-radius:12px;background:var(--blanco);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;color:var(--texto);cursor:pointer;transition:all 0.15s;line-height:1.5;}
+.op-btn:hover{border-color:var(--verde);background:rgba(26,74,53,0.04);}
+.op-btn.ok{background:rgba(46,125,50,0.1);border-color:#2e7d32;color:#1b5e20;font-weight:500;}
+.op-btn.mal{background:rgba(192,57,43,0.08);border-color:var(--rojo);color:#922b21;}
+.op-btn.tout{background:rgba(230,126,34,0.08);border-color:#e67e22;color:#7d4600;}
+.fb-box{display:none;border-radius:10px;padding:16px 20px;font-size:13px;line-height:1.65;margin-bottom:16px;}
+.fb-box.ok{background:rgba(46,125,50,0.08);border:1.5px solid rgba(46,125,50,0.3);color:#1b5e20;}
+.fb-box.mal{background:var(--rojo-s);border:1.5px solid rgba(192,57,43,0.25);color:#922b21;}
+.fb-box.tout{background:rgba(230,126,34,0.1);border:1.5px solid rgba(230,126,34,0.35);color:#7d4600;}
+.btn-sig{display:none;padding:13px 28px;background:var(--verde);color:var(--crema);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:10px;cursor:pointer;float:right;transition:all 0.2s;}
+.btn-sig:hover{background:var(--verde-m);}
+/* RESULTADO */
+#pantalla-resultado{display:none;min-height:100vh;padding:60px 24px;}
+.res-inner{max-width:720px;margin:0 auto;}
+.res-hero{border-radius:20px;padding:48px;text-align:center;margin-bottom:32px;}
+.res-hero.alto{background:linear-gradient(135deg,var(--verde),var(--verde-m));}
+.res-hero.medio{background:linear-gradient(135deg,#2e7d32,#388e3c);}
+.res-hero.bajo{background:linear-gradient(135deg,#c4a35a,#b8860b);}
+.res-hero.critico{background:linear-gradient(135deg,#922b21,var(--rojo));}
+.res-emoji{font-size:52px;margin-bottom:16px;}
+.res-tit{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--crema);margin-bottom:8px;}
+.res-sub{font-size:14px;color:rgba(245,240,232,0.7);margin-bottom:24px;font-weight:300;}
+.res-score-box{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:16px 36px;}
+.res-pct{font-family:'Cormorant Garamond',serif;font-size:52px;color:var(--crema);font-weight:300;line-height:1;}
+.res-pct-lbl{font-size:11px;color:rgba(245,240,232,0.6);letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+.part-badge{background:var(--blanco);border:1px solid rgba(26,74,53,0.1);border-radius:12px;padding:18px 24px;margin-bottom:24px;display:flex;gap:20px;flex-wrap:wrap;}
+.pd{flex:1;min-width:130px;}
+.pd-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--verde-c);margin-bottom:4px;}
+.pd-val{font-size:14px;font-weight:600;color:var(--verde);}
+.des-tit{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--verde);margin-bottom:16px;}
+.des-fila{background:var(--blanco);border:1px solid rgba(26,74,53,0.1);border-radius:10px;padding:14px 20px;margin-bottom:10px;display:flex;align-items:center;gap:14px;}
+.des-ico{font-size:20px;}
+.des-inf{flex:1;}
+.des-cat{font-size:13px;font-weight:500;color:var(--verde);margin-bottom:4px;}
+.des-bar{height:6px;background:rgba(26,74,53,0.08);border-radius:3px;overflow:hidden;}
+.des-fill{height:100%;border-radius:3px;}
+.des-num{font-size:15px;font-weight:700;min-width:50px;text-align:right;}
+.err-item{background:var(--blanco);border:1px solid rgba(192,57,43,0.15);border-left:4px solid var(--rojo);border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:10px;}
+.err-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--verde-c);margin-bottom:5px;}
+.err-preg{font-size:14px;font-weight:500;color:var(--texto);margin-bottom:8px;}
+.err-mal{font-size:12px;color:var(--rojo);margin-bottom:3px;}
+.err-ok{font-size:12px;color:#2e7d32;margin-bottom:8px;}
+.err-exp{font-size:12px;color:var(--texto-s);font-weight:300;line-height:1.6;}
+.env-badge{background:rgba(26,74,53,0.08);border:1px solid rgba(26,74,53,0.15);border-radius:10px;padding:14px;font-size:13px;color:var(--verde);margin-bottom:20px;text-align:center;}
+@media(max-width:600px){.reg-head,.reg-body{padding:28px 20px;}.ex-header{padding:12px 16px;}.ex-body{padding:28px 16px 60px;}.res-hero{padding:32px 20px;}#pantalla-resultado{padding:32px 16px;}}
+</style>
+</head>
+<body>
+
+<!-- ACCESO -->
+<div id="pantalla-acceso">
+  <div class="acc-box" id="acc-inner">
+    <div class="acc-logo">AROMATEX</div>
+    <div class="acc-tipo">Diagnóstico Comercial</div>
+    <div class="acc-sub">Equipo de Ventas · 2026</div>
+    <label class="acc-lbl">Tu contraseña personal</label>
+    <input id="acc-inp" class="acc-inp" type="password" placeholder="••••••••"
+      onkeydown="if(event.key==='Enter')verificar()">
+    <button class="acc-btn" onclick="verificar()">Ingresar</button>
+    <div id="acc-err" class="acc-err">Contraseña incorrecta. Intenta de nuevo.</div>
+    <div id="acc-usado" class="acc-usado">Ya completaste este diagnóstico.<br>Solo se permite un intento por persona.</div>
+  </div>
+</div>
+
+<!-- REGISTRO -->
+<div id="pantalla-registro">
+  <div class="reg-card">
+    <div class="reg-head">
+      <div class="reg-eyebrow">Aromatex Business · Diagnóstico Pre-Capacitación</div>
+      <h1>Evaluación de<br><em>diagnóstico</em></h1>
+      <p>Este examen mide tu nivel de conocimiento actual antes de la capacitación. Responde lo que sabes hoy — no hay respuestas que te perjudiquen. Los resultados ayudan a personalizar el programa.</p>
+    </div>
+    <div class="reg-body">
+      <div class="bienvenida-box">
+        <div class="bienvenida-nombre" id="bv-nombre">Hola 👋</div>
+        <div class="bienvenida-sub">Confirma que eres tú y comienza cuando estés lista.</div>
+      </div>
+      <div class="aviso">
+        <strong>📋 Instrucciones:</strong><br>
+        · 25 preguntas de opción múltiple<br>
+        · <strong>50 segundos</strong> por pregunta — si se agota el tiempo avanza automáticamente<br>
+        · <strong>Solo puedes contestarlo una vez</strong> — no hay opción de reintentar<br>
+        · Responde lo que sabes hoy, sin buscar información
+      </div>
+      <button class="btn-inicio" onclick="iniciar()">Comenzar diagnóstico →</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXAMEN -->
+<div id="pantalla-examen">
+  <div class="ex-header">
+    <div class="ex-marca">AROMATEX · Diagnóstico</div>
+    <div class="ex-centro">
+      <div class="ex-prog-lbl">
+        <span>Pregunta <span id="qn">1</span> de 25</span>
+        <span id="qp">0%</span>
+      </div>
+      <div class="ex-prog-track"><div class="ex-prog-fill" id="qf"></div></div>
+    </div>
+    <svg width="48" height="48" viewBox="0 0 48 48">
+      <circle class="timer-bg" cx="24" cy="24" r="20"/>
+      <circle class="timer-arc" id="t-arc" cx="24" cy="24" r="20"/>
+      <text class="timer-num" id="t-num" x="24" y="24">50</text>
+    </svg>
+  </div>
+  <div class="ex-body">
+    <div id="qcat" class="cat-badge"></div>
+    <div id="qtxt" class="q-txt"></div>
+    <div id="qops" class="ops"></div>
+    <div id="qfb" class="fb-box"></div>
+    <button id="bsig" class="btn-sig" onclick="siguiente()">Siguiente →</button>
+    <div style="clear:both;"></div>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div id="pantalla-resultado">
+  <div class="res-inner">
+    <div id="rhero" class="res-hero">
+      <div id="remoji" class="res-emoji"></div>
+      <div id="rtit" class="res-tit"></div>
+      <div id="rsub" class="res-sub"></div>
+      <div class="res-score-box">
+        <div id="rpct" class="res-pct"></div>
+        <div class="res-pct-lbl">Diagnóstico completado</div>
+      </div>
+    </div>
+    <div id="rbadge" class="part-badge"></div>
+    <div id="renv" class="env-badge" style="display:none;">⏳ Registrando resultados…</div>
+    <div id="renviado" class="env-badge" style="display:none;">✅ Resultados registrados correctamente.</div>
+    <div class="des-tit">Desempeño por área</div>
+    <div id="rdesglose"></div>
+    <div style="margin-top:28px;">
+      <div class="des-tit">Áreas de oportunidad</div>
+      <div id="rerrores"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   CONFIGURACIÓN
+========================================================== */
+const USUARIOS = {
+  'DamarizRM':  'Damariz Romero',
+  'JanethSM':   'Janeth Sauceda',
+  'XiadaniGC':  'Xiadani Garcia',
+  'KatyaGC':    'Katya Gomez',
+  'AngelicaUC': 'Angelica Uribe',
+  'MagnaliMQ':  'Magnali Miranda',
+  'RubiBDR':    'Rubi Montoya',
+  'Prueba123':  'Usuario Prueba',
+};
+
+// Usuario administrador — acceso a monitor de resultados
+const ADMIN_PASS = 'AromaDirAG26';
+const SHEETS_URL = ''; // ← pegar URL de Apps Script aquí
+const TIMER_SEG  = 50;
+const SK = 'aromatex_diag2026_';
+
+/* ==========================================================
+   PREGUNTAS
+========================================================== */
+const PQ = [
+
+  // ── CÓMO OPERA AROMATEX (5) ─────────────────────────────
+  {cat:'Cómo opera Aromatex',ci:0,
+   q:'¿Qué pasa con el equipo difusor cuando termina el contrato de un cliente?',
+   ops:['El cliente se queda con el equipo porque ya lo pagó mensualmente',
+        'El cliente puede comprarlo a precio preferencial',
+        'Aromatex retira el equipo porque siempre fue de su propiedad',
+        'El equipo queda en comodato indefinido sin costo'],
+   c:2,exp:'En el modelo comodato el equipo es siempre propiedad de Aromatex. Al terminar el contrato, el equipo se retira. El cliente nunca adquiere el equipo — solo paga la suscripción mensual por el servicio.'},
+
+  {cat:'Cómo opera Aromatex',ci:0,
+   q:'Un cliente potencial te pregunta: "Si tengo una sucursal en Chihuahua y otra en Cancún, ¿pueden atenderlas con el mismo proveedor?" ¿Qué le respondes?',
+   ops:['Sí, pero habría un recargo por distancia en plazas lejanas',
+        'Sí, tenemos técnicos propios en los 32 estados sin costo adicional por plaza',
+        'Para Cancún trabajamos con un socio local de confianza',
+        'Sí, siempre y cuando estén en las ciudades principales de cobertura'],
+   c:1,exp:'Aromatex opera con técnicos propios en los 32 estados — sin subcontratistas, sin recargos por plaza. Una sola factura, mismo estándar de servicio en cualquier estado.'},
+
+  {cat:'Cómo opera Aromatex',ci:0,
+   q:'¿Cuántos coordinadores regionales supervisan la operación técnica de Aromatex?',
+   ops:['2 — norte y sur','4 — una por zona del país','6','10 — uno por región comercial'],
+   c:2,exp:'La estructura es: 1 Gerente Nacional de Servicios → 6 Coordinadores Regionales → +80 técnicos propios. Cada coordinador gestiona una zona y responde directamente al gerente nacional.'},
+
+  {cat:'Cómo opera Aromatex',ci:0,
+   q:'Un cliente te dice: "¿Cómo sé que realmente les dieron mantenimiento a mis difusores el mes pasado?" ¿Qué le dices?',
+   ops:['Le pedimos al técnico que le mande un mensaje cuando termina',
+        'Tiene acceso al historial en Operandium — cada visita queda registrada con evidencia fotográfica y fecha',
+        'Le enviamos un correo de confirmación manual cada mes',
+        'El técnico llena una bitácora en papel que enviamos al cliente'],
+   c:1,exp:'Operandium registra cada servicio técnico con evidencia fotográfica, fecha y técnico asignado. El cliente tiene visibilidad completa de su historial — eso es trazabilidad total y un diferenciador concreto frente a la competencia.'},
+
+  {cat:'Cómo opera Aromatex',ci:0,
+   q:'¿Cuántas de las siguientes afirmaciones sobre la operación de Aromatex son correctas? 1) Opera con técnicos propios. 2) Tiene más de 6,000 servicios mensuales. 3) Subcontrata en estados sin oficina. 4) Gestiona incidencias por Operandium.',
+   ops:['Solo la 1 y la 3','La 1, la 2 y la 3','La 1, la 2 y la 4','Las 4 son correctas'],
+   c:2,exp:'Son correctas: 1) Técnicos propios — sí. 2) +6,000 servicios mensuales — sí. 3) Subcontrata en algunos estados — NO, opera 100% propio en los 32 estados. 4) Gestión por Operandium — sí.'},
+
+  // ── DIFUSORES Y PORTAFOLIO (5) ──────────────────────────
+  {cat:'Difusores y portafolio',ci:1,
+   q:'Tienes una propuesta para una boutique de lujo con dos espacios: recepción de 45m² y sala de espera de 120m². ¿Cómo la estructuras?',
+   ops:['Un Aroma Xtreme para cubrir ambos espacios desde un solo punto',
+        'Dos Aroma Home, uno para cada espacio',
+        'Un Aroma Home para la recepción y un Aroma Advance para la sala de espera',
+        'Un Aroma Plus para todo — siempre mejor tener margen de cobertura'],
+   c:2,exp:'El Aroma Home cubre hasta 100m² y es correcto para la recepción de 45m². El Aroma Advance cubre hasta 200m² y es el adecuado para la sala de 120m². Proponer equipos sobredimensionados encarece la propuesta sin beneficio.'},
+
+  {cat:'Difusores y portafolio',ci:1,
+   q:'Un cliente de hotelería te pregunta cuántos difusores necesita para aromatizar su hotel: lobby de 300m², 2 pasillos de 80m² cada uno y 3 baños de 30m² cada uno. ¿Cuántos equipos y de qué modelo?',
+   ops:['1 Aroma Xtreme para todo el hotel',
+        '1 Aroma Plus para el lobby, 2 Aroma Advance para pasillos, 3 Aroma Home para baños',
+        '2 Aroma Plus para el hotel completo',
+        '1 Aroma Plus para el lobby, 5 Aroma Home para el resto'],
+   c:1,exp:'Lobby 300m² → Aroma Plus (hasta 350m²). Pasillos de 80m² → Aroma Home por cada uno (hasta 100m²). Baños de 30m² → Aroma Home por cada uno. Total: 1 Plus + 5 Home. La opción B es la única que asigna el equipo correcto a cada espacio.'},
+
+  {cat:'Difusores y portafolio',ci:1,
+   q:'¿Qué modelo de difusor es una pieza decorativa de lujo diseñada para pararse en piso?',
+   ops:['Aroma Home — por su diseño compacto de escritorio',
+        'Aroma Advance — porque es el más versátil',
+        'Aroma Plus — diseño torre vertical de 598mm de alto',
+        'Aroma Xtreme — por su tamaño industrial'],
+   c:2,exp:'El Aroma Plus tiene un diseño de torre vertical de 598mm — es la pieza más elegante de la línea y está pensada como elemento decorativo premium para lobbies y espacios de alta gama. El Xtreme es el más potente pero no el más estético.'},
+
+  {cat:'Difusores y portafolio',ci:1,
+   q:'Un cliente tiene una agencia automotriz con un showroom de 450m². Propones Aroma Xtreme. El cliente pregunta: "¿Y si en el futuro expandimos el showroom a 600m²?" ¿Qué le dices?',
+   ops:['El Aroma Xtreme llegaría a 600m² sin problema — tiene margen',
+        'Tendríamos que cambiar todo el equipo por uno más potente',
+        'Para 600m² necesitarían un segundo Aroma Xtreme adicional o integración con su sistema HVAC',
+        'No tenemos equipo para más de 500m² — ese sería nuestro límite'],
+   c:2,exp:'El Aroma Xtreme cubre hasta 500m². Para 600m² la solución son dos unidades estratégicamente ubicadas o integración con el sistema HVAC del edificio — ambas opciones las puede gestionar Aromatex.'},
+
+  {cat:'Difusores y portafolio',ci:1,
+   q:'¿Cuál es la diferencia principal entre el Aroma Advance y el Aroma Plus en cuanto a instalación?',
+   ops:['El Plus es más potente que el Advance en fragancia por hora',
+        'El Advance puede ir en HVAC; el Plus solo va parado en piso con cable por abajo',
+        'No hay diferencia — ambos tienen las mismas opciones de instalación',
+        'El Plus cuesta más pero cubre el mismo espacio que el Advance'],
+   c:1,exp:'El Aroma Advance se puede instalar parado en piso o en sistema HVAC. El Aroma Plus solo va parado en piso con alimentación por cable inferior (bottom power supply) — es un elemento decorativo, no se integra a HVAC. Además, el Plus cubre hasta 350m² y el Advance hasta 200m².'},
+
+  // ── CLIENTE IDEAL Y PROCESO DE VENTA (5) ────────────────
+  {cat:'Cliente ideal y proceso de venta',ci:2,
+   q:'Llevas 3 semanas siguiendo a un prospecto. Ha visto tu propuesta pero no responde. ¿Qué haces?',
+   ops:['Seguir mandando mensajes diarios hasta que responda',
+        'Hacer un último contacto con una pregunta directa y concreta, y si no responde moverlo a frío',
+        'Bajar el precio en el siguiente mensaje para reactivarlo',
+        'Escalar con tu gerente para que él llame directamente'],
+   c:1,exp:'La cadencia estándar es de 48h entre contactos. Después de varios intentos sin respuesta, un último mensaje con pregunta concreta es lo correcto. Si no responde, se mueve a "frío" y se avanza — perseguir leads muertos consume tiempo que puedes invertir en prospectos activos.'},
+
+  {cat:'Cliente ideal y proceso de venta',ci:2,
+   q:'Un prospecto con 4 sucursales en una sola ciudad te dice que no planea expandirse. ¿Lo calificas como cliente potencial?',
+   ops:['No — el mínimo son 10 sucursales para que tenga sentido el servicio',
+        'Sí — 4 sucursales con cliente presencial pueden calificar aunque no haya expansión',
+        'Solo si están en ciudades donde Aromatex tiene técnico propio',
+        'No — sin expansión el contrato no es rentable para Aromatex'],
+   c:1,exp:'4 sucursales con cliente presencial sí califican. El ICP no exige expansión futura — califica por sector, tamaño actual, mentalidad de experiencia y disposición a un contrato mensual. Un cliente estable con 4 sucursales puede ser muy rentable a largo plazo.'},
+
+  {cat:'Cliente ideal y proceso de venta',ci:2,
+   q:'Estás en una reunión con el director de operaciones de una cadena de farmacias. ¿Cuál sería el argumento de apertura más efectivo?',
+   ops:['"Somos la empresa más barata del mercado en aromatización"',
+        '"Trabajamos con cadenas similares a la suya — el aroma en farmacia mejora la percepción de limpieza y genera confianza en el producto"',
+        '"Tenemos el catálogo de aromas más amplio de México"',
+        '"Podemos empezar mañana mismo si firman hoy"'],
+   c:1,exp:'El argumento más efectivo conecta el servicio con un beneficio específico para su negocio: percepción de limpieza y confianza en el producto, que son valores críticos en el sector farmacéutico. Precio, catálogo y urgencia son argumentos débiles en una primera reunión con un director.'},
+
+  {cat:'Cliente ideal y proceso de venta',ci:2,
+   q:'Un cliente te dice: "Ya tenemos proveedor de aromatización en nuestras tiendas de CDMX y Guadalajara, pero las del norte no tienen nada." ¿Cuál es tu respuesta más estratégica?',
+   ops:['"Podemos darte mejor precio que tu proveedor actual para CDMX y GDL"',
+        '"Empecemos por cubrir el norte donde no tienen nada — y cuando vean el resultado, evaluamos consolidar todo con nosotros"',
+        '"Lamentablemente no trabajamos con clientes que ya tienen otro proveedor"',
+        '"Deberías cancelar a tu proveedor actual y consolidar todo con nosotros desde el inicio"'],
+   c:1,exp:'La estrategia correcta es entrar donde hay una necesidad clara y sin fricción — las sucursales del norte sin servicio. Desde ahí se construye la relación y se demuestra el valor antes de competir por las plazas que ya tienen cubiertas. Atacar al proveedor actual genera defensiva.'},
+
+  {cat:'Cliente ideal y proceso de venta',ci:2,
+   q:'¿Cuál de estas señales indica que un prospecto está listo para cerrar?',
+   ops:['Pide que le mandes información general por correo',
+        'Dice que lo consultará con su equipo sin dar fecha',
+        'Pregunta cuánto tiempo tarda la instalación y si aceptan factura a 30 días',
+        'Pide una segunda reunión para conocer más del producto'],
+   c:2,exp:'Preguntar por tiempos de instalación y condiciones de facturación son señales de compra claras — el prospecto ya está pensando en la operación, no en si comprar. Pedir información general o una segunda reunión sin compromiso son señales de interés, no de cierre.'},
+
+  // ── PROCESO OPERATIVO Y SISTEMAS (5) ────────────────────
+  {cat:'Proceso operativo y sistemas',ci:3,
+   q:'Cerrate una venta el 20 de mayo. El cliente quiere que la factura entre en mayo. ¿Es posible?',
+   ops:['Sí, siempre que la instalación sea antes del 31 de mayo',
+        'No — el cierre de facturación es el día 17 y ya pasó',
+        'Sí, pero con recargo por facturación extemporánea',
+        'Depende de si el cliente tiene OC emitida antes del 25'],
+   c:1,exp:'La fecha límite para que una factura entre en el mismo mes es el día 17. Si el cierre fue el 20 de mayo, la factura entra en junio — no hay excepciones a esa fecha de corte.'},
+
+  {cat:'Proceso operativo y sistemas',ci:3,
+   q:'¿Qué información necesitas tener lista ANTES de crear una propiedad en Operandium?',
+   ops:['El nombre del gerente del cliente y su correo',
+        'La dirección exacta con link de Google Maps de la ubicación',
+        'El número de contrato generado por el área legal',
+        'La fecha de instalación confirmada por el técnico'],
+   c:1,exp:'El link de Google Maps de la ubicación exacta es campo obligatorio en Operandium para crear una propiedad. Sin ese dato el sistema no permite guardar el registro — hay que tenerlo antes de empezar el alta.'},
+
+  {cat:'Proceso operativo y sistemas',ci:3,
+   q:'Un cliente nuevo ya firmó la Carta Convenio. ¿Cuál es el siguiente paso correcto?',
+   ops:['Llamar a operaciones para coordinar la instalación directamente',
+        'Esperar a que el cliente haga el primer pago para proceder',
+        'Dar de alta al cliente en Operandium y registrarlo en Airtable, luego coordinar instalación',
+        'Mandar la Carta Convenio por correo a administración y esperar confirmación'],
+   c:2,exp:'Con Carta Convenio firmada, el flujo correcto es: alta en Operandium + registro en Airtable → coordinación con Operaciones para la instalación. Sin el alta en sistema no hay facturación ni registro oficial de la venta.'},
+
+  {cat:'Proceso operativo y sistemas',ci:3,
+   q:'¿Cuál es la diferencia entre crear una cotización en Zoho CRM y en Operandium?',
+   ops:['Son lo mismo — cualquiera de los dos sirve en cualquier etapa',
+        'Zoho es para seguimiento del pipeline; Operandium genera la cotización formal que activa la operación y facturación',
+        'Operandium es solo para quejas y mantenimiento, no para cotizaciones',
+        'En Zoho se hace la cotización definitiva y en Operandium solo se registra el número de contrato'],
+   c:1,exp:'Zoho gestiona el pipeline de ventas — prospecto, seguimiento, etapas. La cotización formal en Operandium es la que activa la cadena operativa y de facturación. Son herramientas para momentos distintos del proceso.'},
+
+  {cat:'Proceso operativo y sistemas',ci:3,
+   q:'Un cliente llama molesto porque su difusor lleva 3 días sin funcionar y nadie lo ha atendido. ¿Qué haces?',
+   ops:['Le dices que registre la queja por correo a servicio al cliente',
+        'Le das el número directo del técnico de su zona',
+        'Registras la incidencia en Operandium para que el coordinador regional la gestione y le confirmas tiempo de respuesta',
+        'Le dices que espere a la visita mensual de mantenimiento programada'],
+   c:2,exp:'Las incidencias se registran en Operandium — eso genera una alerta para el coordinador regional quien despacha al técnico más cercano. Es el proceso que garantiza respuesta documentada y trazable. Dar el número del técnico directo o esperar al mantenimiento no es el proceso correcto.'},
+
+  // ── INCENTIVOS Y REGLAS (5) ──────────────────────────────
+  {cat:'Incentivos y reglas',ci:4,
+   q:'Cerraste una venta el 3 de marzo. La instalación fue el 10 de marzo. El cliente pagó su primera factura el 5 de abril. ¿Cuándo se genera tu comisión?',
+   ops:['El 3 de marzo — cuando cerraste la venta',
+        'El 10 de marzo — cuando se instaló el equipo',
+        'En la segunda quincena de mayo — cuando se procesa lo cobrado en abril',
+        'En la segunda quincena de abril — a los 30 días del cierre'],
+   c:2,exp:'La comisión se genera sobre factura cobrada — el pago fue el 5 de abril, por lo tanto aplica al mes de abril. Las comisiones se pagan la segunda quincena del mes siguiente, es decir en la segunda quincena de mayo.'},
+
+  {cat:'Incentivos y reglas',ci:4,
+   q:'Tienes una cuenta de 5 sucursales con Aroma Advance ($1,860/mes c/u) con 10% de descuento. ¿Cuánto comisionas de la primera factura?',
+   ops:['$3,720','$3,348','$9,300','$4,650'],
+   c:1,exp:'5 × $1,860 = $9,300 menos 10% = $8,370 de factura mensual. Tu comisión del 40% sobre esa primera factura cobrada = $3,348. Esa es la ventaja de la venta recurrente — comisión alta en el primer mes.'},
+
+  {cat:'Incentivos y reglas',ci:4,
+   q:'Un cliente tuyo de 8 meses cancela. Comisionaste $4,000 cuando entró. ¿Cuánto te descontarán por cashback?',
+   ops:['$4,000 — cashback del 100%','$2,000 — cashback del 50%','$1,000 — cashback del 25%','Nada — ya pasaron 6 meses'],
+   c:1,exp:'Por cancelación entre 5 y 8 meses el cashback es del 50%. Si comisionaste $4,000, te descuentan $2,000. La tabla: 1–4 meses = 100%, 5–8 = 50%, 9–12 = 25%, más de 12 = sin cashback.'},
+
+  {cat:'Incentivos y reglas',ci:4,
+   q:'En un mes cumples el 65% de tu meta recurrente y el 100% de tu meta eventual. ¿Qué pasa con tus comisiones?',
+   ops:['No puedes comisionar nada — no alcanzaste el 70% de recurrente',
+        'Puedes comisionar al 80% de las tasas vigentes sobre el total de ventas del mes',
+        'Cobras solo la parte eventual al 5% sin afectación',
+        'Se recalcula todo para el siguiente mes automáticamente'],
+   c:1,exp:'El habilitador alternativo aplica cuando no alcanzas el 70% de meta recurrente PERO sí el 100% de la meta eventual. En ese caso comisionas al 80% de las tasas vigentes sobre tus ventas totales del mes. No es la regla — es el mecanismo de rescate.'},
+
+  {cat:'Incentivos y reglas',ci:4,
+   q:'Un cliente grande te pide 25% de descuento y el trato está a punto de cerrarse. ¿Qué haces?',
+   ops:['Lo autorizas tú mismo — es mejor cerrar que perder el cliente',
+        'Le dices que el máximo que puedes dar es 20% y le ofreces pago anticipado como alternativa',
+        'Rechazas el descuento — las reglas son claras y no hay excepciones',
+        'Le prometes el 25% y luego consigues la autorización'],
+   c:1,exp:'El tabulador estándar llega al 20%. Para ir más allá necesitas autorización previa del Gerente o Director de Aromatex. La respuesta correcta es ofrecer el máximo del tabulador (20%) más una alternativa como pago anticipado, y si el cliente insiste en más, escalar para autorización — nunca prometer algo que no tienes autorizado.'},
+
+];
+
+/* ==========================================================
+   ESTADO
+========================================================== */
+let user='', nombre='', orden=[], idx=0, resps=[], respondida=false, timer=null, seg=TIMER_SEG;
+
+/* ==========================================================
+   ACCESO
+========================================================== */
+function verificar(){
+  const v=document.getElementById('acc-inp').value.trim();
+  document.getElementById('acc-err').style.display='none';
+  document.getElementById('acc-usado').style.display='none';
+
+  // Acceso administrador
+  if(v === ADMIN_PASS){
+    const p=document.getElementById('pantalla-acceso');
+    p.style.opacity='0'; p.style.transition='opacity 0.4s';
+    setTimeout(()=>{ p.style.display='none'; },400);
+    mostrarMonitor();
+    return;
+  }
+
+  const n=USUARIOS[v];
+  if(!n){
+    document.getElementById('acc-err').style.display='block';
+    document.getElementById('acc-inp').value='';
+    sacudir(); return;
+  }
+  if(localStorage.getItem(SK+v)==='1'){
+    document.getElementById('acc-usado').style.display='block';
+    document.getElementById('acc-inp').value=''; return;
+  }
+  user=v; nombre=n;
+  const p=document.getElementById('pantalla-acceso');
+  p.style.opacity='0'; p.style.transition='opacity 0.4s';
+  setTimeout(()=>{ p.style.display='none'; },400);
+  document.getElementById('bv-nombre').textContent='Hola, '+n+' 👋';
+  document.getElementById('pantalla-registro').style.display='flex';
+}
+function sacudir(){
+  const b=document.getElementById('acc-inner');
+  b.style.animation='none';
+  setTimeout(()=>{ b.style.animation='shake 0.4s ease'; },10);
+}
+document.getElementById('acc-inp').addEventListener('keydown',e=>{ if(e.key==='Enter') verificar(); });
+
+/* ==========================================================
+   INICIO
+========================================================== */
+function iniciar(){
+  orden=[...PQ].sort(()=>Math.random()-0.5);
+  idx=0; resps=[];
+  document.getElementById('pantalla-registro').style.display='none';
+  document.getElementById('pantalla-examen').style.display='block';
+  mostrar();
+}
+
+/* ==========================================================
+   TIMER
+========================================================== */
+function iniciarTimer(){
+  seg=TIMER_SEG; updateTimer();
+  timer=setInterval(()=>{
+    seg--;
+    updateTimer();
+    if(seg<=0){ clearInterval(timer); sinTiempo(); }
+  },1000);
+}
+function updateTimer(){
+  const arc=document.getElementById('t-arc');
+  const num=document.getElementById('t-num');
+  if(!arc||!num) return;
+  num.textContent=seg;
+  arc.style.strokeDashoffset=126*(1-seg/TIMER_SEG);
+  if(seg<=10){ arc.style.stroke='#e74c3c'; num.style.fill='#e74c3c'; }
+  else if(seg<=20){ arc.style.stroke='#e67e22'; num.style.fill='#e67e22'; }
+  else{ arc.style.stroke='var(--oro)'; num.style.fill='var(--crema)'; }
+}
+function sinTiempo(){
+  if(respondida) return;
+  respondida=true;
+  const q=orden[idx];
+  document.getElementById('qops').querySelectorAll('.op-btn').forEach((b,i)=>{
+    b.style.cursor='default';
+    if(i===q.c) b.classList.add('ok'); else b.classList.add('tout');
+  });
+  const fb=document.getElementById('qfb');
+  fb.style.display='block'; fb.className='fb-box tout';
+  fb.innerHTML='⏱️ <strong>Tiempo agotado.</strong> '+q.exp;
+  resps.push({correcta:false,sinTiempo:true,ci:q.ci,cat:q.cat,preg:q.q,rUser:'Sin respuesta (tiempo agotado)',rOk:q.ops[q.c],exp:q.exp});
+  const bs=document.getElementById('bsig');
+  bs.style.display='block';
+  bs.textContent=idx===PQ.length-1?'Ver diagnóstico →':'Siguiente →';
+}
+
+/* ==========================================================
+   MOSTRAR PREGUNTA
+========================================================== */
+function mostrar(){
+  if(timer) clearInterval(timer);
+  respondida=false;
+  const q=orden[idx];
+  const pct=Math.round((idx/PQ.length)*100);
+  document.getElementById('qn').textContent=idx+1;
+  document.getElementById('qp').textContent=pct+'%';
+  document.getElementById('qf').style.width=pct+'%';
+  document.getElementById('qcat').textContent=q.cat;
+  document.getElementById('qtxt').textContent=q.q;
+  const cont=document.getElementById('qops'); cont.innerHTML='';
+  q.ops.forEach((op,i)=>{
+    const b=document.createElement('button');
+    b.className='op-btn'; b.textContent=op;
+    b.onclick=()=>responder(i);
+    cont.appendChild(b);
+  });
+  document.getElementById('qfb').style.display='none';
+  document.getElementById('qfb').className='fb-box';
+  document.getElementById('bsig').style.display='none';
+  const arc=document.getElementById('t-arc');
+  const num=document.getElementById('t-num');
+  if(arc){ arc.style.stroke='var(--oro)'; arc.style.strokeDashoffset='0'; }
+  if(num){ num.style.fill='var(--crema)'; }
+  window.scrollTo({top:0,behavior:'smooth'});
+  iniciarTimer();
+}
+
+/* ==========================================================
+   RESPONDER
+========================================================== */
+function responder(i){
+  if(respondida) return;
+  respondida=true; clearInterval(timer);
+  const q=orden[idx]; const ok=i===q.c;
+  document.getElementById('qops').querySelectorAll('.op-btn').forEach((b,j)=>{
+    b.style.cursor='default';
+    if(j===q.c) b.classList.add('ok');
+    else if(j===i&&!ok) b.classList.add('mal');
+  });
+  const fb=document.getElementById('qfb');
+  fb.style.display='block'; fb.className='fb-box '+(ok?'ok':'mal');
+  fb.innerHTML=(ok?'<strong>✓ Correcto.</strong> ':'<strong>✗ Incorrecto.</strong> ')+q.exp;
+  resps.push({correcta:ok,ci:q.ci,cat:q.cat,preg:q.q,rUser:q.ops[i],rOk:q.ops[q.c],exp:q.exp});
+  const bs=document.getElementById('bsig'); bs.style.display='block';
+  bs.textContent=idx===PQ.length-1?'Ver diagnóstico →':'Siguiente →';
+}
+
+/* ==========================================================
+   SIGUIENTE
+========================================================== */
+function siguiente(){ idx++; if(idx>=PQ.length) resultado(); else mostrar(); }
+
+/* ==========================================================
+   RESULTADO
+========================================================== */
+function resultado(){
+  clearInterval(timer);
+  localStorage.setItem(SK+user,'1'); // bloquear reintento
+  // Guardar datos detallados para el monitor
+  const cats2=['Cómo opera Aromatex','Difusores y portafolio','Cliente ideal y proceso de venta','Proceso operativo y sistemas','Incentivos y reglas'];
+  const desData=cats2.map((cat,ci)=>{
+    const del=resps.filter(r=>r.ci===ci);
+    const c2=del.filter(r=>r.correcta).length;
+    return {cat,p:del.length>0?Math.round((c2/del.length)*100):0};
+  });
+  localStorage.setItem(SK+'data_'+user, JSON.stringify({
+    score:pct, nivel:nv.tit,
+    fecha:new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'}),
+    hora:new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}),
+    cats:desData
+  }));
+  document.getElementById('pantalla-examen').style.display='none';
+  document.getElementById('pantalla-resultado').style.display='block';
+  const total=resps.length;
+  const corr=resps.filter(r=>r.correcta).length;
+  const pct=Math.round((corr/total)*100);
+  const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
+  const hora=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  const niveles=[
+    {min:85,cl:'alto',   em:'🎯',tit:'Conocimiento sólido',     sub:'Tienes una base muy sólida. La capacitación va a refinar y profundizar lo que ya sabes.'},
+    {min:65,cl:'medio',  em:'📈',tit:'Buen punto de partida',    sub:'Hay áreas bien establecidas y otras con oportunidad de desarrollo. El programa las cubre.'},
+    {min:45,cl:'bajo',   em:'📚',tit:'Oportunidad de aprendizaje',sub:'La capacitación va a marcar una diferencia importante en tu desempeño comercial.'},
+    {min:0, cl:'critico',em:'🚀',tit:'Empezamos desde cero',     sub:'El programa está diseñado para esto. Todo lo que aprendas será nuevo y muy valioso.'},
+  ];
+  const nv=niveles.find(n=>pct>=n.min);
+  document.getElementById('rhero').className='res-hero '+nv.cl;
+  document.getElementById('remoji').textContent=nv.em;
+  document.getElementById('rtit').textContent=nv.tit;
+  document.getElementById('rsub').textContent=nv.sub;
+  document.getElementById('rpct').textContent=corr+'/'+total+' — '+pct+'%';
+  document.getElementById('rbadge').innerHTML=
+    `<div class="pd"><div class="pd-lbl">Nombre</div><div class="pd-val">${nombre}</div></div>
+     <div class="pd"><div class="pd-lbl">Fecha</div><div class="pd-val">${fecha}</div></div>
+     <div class="pd"><div class="pd-lbl">Hora</div><div class="pd-val">${hora}</div></div>
+     <div class="pd"><div class="pd-lbl">Nivel</div><div class="pd-val">${nv.tit}</div></div>`;
+  const cats=['Cómo opera Aromatex','Difusores y portafolio','Cliente ideal y proceso de venta','Proceso operativo y sistemas','Incentivos y reglas'];
+  const icos=['⚙️','📡','🎯','🖥️','💰'];
+  const des=document.getElementById('rdesglose'); des.innerHTML='';
+  const ddata=[];
+  cats.forEach((cat,ci)=>{
+    const del=resps.filter(r=>r.ci===ci);
+    const c2=del.filter(r=>r.correcta).length;
+    const p=del.length>0?Math.round((c2/del.length)*100):0;
+    const col=p>=80?'#2e7d32':p>=60?'#f57c00':'#c0392b';
+    ddata.push({cat,p,corr:c2,total:del.length});
+    des.innerHTML+=`<div class="des-fila"><div class="des-ico">${icos[ci]}</div><div class="des-inf"><div class="des-cat">${cat}</div><div class="des-bar"><div class="des-fill" style="width:${p}%;background:${col};"></div></div></div><div class="des-num" style="color:${col};">${p}%<div style="font-size:11px;font-weight:300;color:var(--texto-s);">${c2}/${del.length}</div></div></div>`;
+  });
+  const errs=resps.filter(r=>!r.correcta);
+  const erEl=document.getElementById('rerrores');
+  if(errs.length===0){
+    erEl.innerHTML='<div style="text-align:center;padding:24px;color:var(--verde);font-weight:500;">🎯 ¡Puntuación perfecta — sin errores!</div>';
+  } else {
+    erEl.innerHTML=errs.map(e=>`<div class="err-item"><div class="err-cat">${e.cat}</div><div class="err-preg">${e.preg}</div><div class="err-mal">Tu respuesta: ${e.rUser}</div><div class="err-ok">Respuesta correcta: ${e.rOk}</div><div class="err-exp">${e.exp}</div></div>`).join('');
+  }
+  enviar(pct,corr,total,ddata,nv.tit,fecha,hora);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ==========================================================
+   ENVÍO A SHEETS
+========================================================== */
+function enviar(pct,corr,total,ddata,nivel,fecha,hora){
+  if(!SHEETS_URL) return;
+  document.getElementById('renv').style.display='block';
+  const body={nombre,usuario:user,fecha,hora,score_pct:pct,correctas:corr,total,nivel,
+    opera_pct:ddata[0]?.p||0, difusores_pct:ddata[1]?.p||0, cliente_pct:ddata[2]?.p||0,
+    sistemas_pct:ddata[3]?.p||0, incentivos_pct:ddata[4]?.p||0};
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(()=>{ document.getElementById('renv').style.display='none'; document.getElementById('renviado').style.display='block'; })
+    .catch(()=>{ document.getElementById('renv').style.display='none'; });
+}
+
+/* ==========================================================
+   MONITOR DE RESULTADOS (solo admin)
+========================================================== */
+function mostrarMonitor(){
+  document.getElementById('pantalla-monitor').style.display='block';
+  renderMonitor();
+}
+
+function renderMonitor(){
+  const lista = Object.keys(USUARIOS);
+  const cats = ['Cómo opera Aromatex','Difusores y portafolio','Cliente ideal y proceso de venta','Proceso operativo y sistemas','Incentivos y reglas'];
+  const icos = ['⚙️','📡','🎯','🖥️','💰'];
+
+  let pendientes = [];
+  let completados = [];
+
+  lista.forEach(key => {
+    const nombre = USUARIOS[key];
+    const hecho = localStorage.getItem(SK+key) === '1';
+    const data = localStorage.getItem(SK+'data_'+key);
+
+    if(!hecho){
+      pendientes.push(nombre);
+    } else {
+      const d = data ? JSON.parse(data) : null;
+      completados.push({nombre, key, data:d});
+    }
+  });
+
+  // Resumen
+  const pct_completado = Math.round((completados.length / lista.length)*100);
+  document.getElementById('mon-resumen').innerHTML = `
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px;">
+      <div style="background:var(--verde);border-radius:12px;padding:20px 28px;color:var(--crema);flex:1;min-width:160px;text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;color:var(--oro-s);">${completados.length}/${lista.length}</div>
+        <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,232,0.55);">Han contestado</div>
+      </div>
+      <div style="background:var(--blanco);border:1px solid rgba(26,74,53,0.12);border-radius:12px;padding:20px 28px;flex:2;min-width:200px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--verde-c);margin-bottom:10px;">Pendientes</div>
+        ${pendientes.length === 0
+          ? '<div style="font-size:13px;color:var(--verde);font-weight:500;">✅ Todas contestaron</div>'
+          : pendientes.map(n=>`<div style="font-size:13px;color:var(--texto-s);padding:3px 0;border-bottom:1px solid rgba(26,74,53,0.06);">· ${n}</div>`).join('')}
+      </div>
+    </div>`;
+
+  // Tabla de resultados
+  if(completados.length === 0){
+    document.getElementById('mon-tabla').innerHTML = '<div style="text-align:center;padding:40px;color:var(--texto-s);font-size:14px;">Aún no hay resultados registrados.</div>';
+    return;
+  }
+
+  let html = `
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;background:var(--blanco);border-radius:12px;overflow:hidden;border:1px solid rgba(26,74,53,0.1);font-size:13px;">
+      <thead>
+        <tr style="background:var(--verde);">
+          <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--oro-s);">Nombre</th>
+          <th style="padding:12px 16px;text-align:center;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--oro-s);">Score</th>
+          <th style="padding:12px 16px;text-align:center;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--oro-s);">Nivel</th>
+          ${cats.map(c=>`<th style="padding:12px 10px;text-align:center;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--oro-s);">${icos[cats.indexOf(c)]}</th>`).join('')}
+          <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--oro-s);">Fecha</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  completados.forEach((p, i) => {
+    const d = p.data;
+    const bg = i%2===0 ? 'var(--blanco)' : 'var(--gris)';
+    if(!d){
+      html += `<tr style="background:${bg};">
+        <td style="padding:12px 16px;font-weight:500;color:var(--verde);">${p.nombre}</td>
+        <td colspan="8" style="padding:12px 16px;color:var(--texto-s);font-style:italic;">Completado (sin datos detallados)</td>
+      </tr>`;
+    } else {
+      const scoreColor = d.score>=80?'#2e7d32':d.score>=60?'#f57c00':'#c0392b';
+      html += `<tr style="background:${bg};">
+        <td style="padding:12px 16px;font-weight:500;color:var(--verde);">${p.nombre}</td>
+        <td style="padding:12px 16px;text-align:center;font-weight:700;font-size:15px;color:${scoreColor};">${d.score}%</td>
+        <td style="padding:12px 16px;text-align:center;font-size:12px;color:${scoreColor};font-weight:500;">${d.nivel}</td>
+        ${(d.cats||[]).map(c=>{
+          const col=c.p>=80?'#2e7d32':c.p>=60?'#f57c00':'#c0392b';
+          return `<td style="padding:12px 10px;text-align:center;font-weight:600;color:${col};">${c.p}%</td>`;
+        }).join('')}
+        <td style="padding:12px 16px;font-size:12px;color:var(--texto-s);">${d.fecha||'—'}<br><span style="font-size:11px;">${d.hora||''}</span></td>
+      </tr>`;
+    }
+  });
+
+  html += `</tbody></table></div>`;
+
+  // Promedio por categoría si hay datos
+  const conDatos = completados.filter(p=>p.data&&p.data.cats);
+  if(conDatos.length > 0){
+    html += `<div style="margin-top:28px;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--verde);margin-bottom:14px;">Promedio del equipo por área</div>`;
+    cats.forEach((cat,ci)=>{
+      const vals = conDatos.map(p=>p.data.cats[ci]?.p||0);
+      const avg = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+      const col = avg>=80?'#2e7d32':avg>=60?'#f57c00':'#c0392b';
+      html += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;background:var(--blanco);border:1px solid rgba(26,74,53,0.1);border-radius:10px;padding:12px 18px;">
+        <span style="font-size:18px;">${icos[ci]}</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:var(--verde);margin-bottom:4px;">${cat}</div>
+          <div style="height:6px;background:rgba(26,74,53,0.08);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:${avg}%;background:${col};border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:${col};min-width:44px;text-align:right;">${avg}%</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('mon-tabla').innerHTML = html;
+}
+
+function limpiarMonitor(){
+  if(!confirm('¿Seguro que quieres borrar TODOS los resultados? Esta acción no se puede deshacer.')) return;
+  Object.keys(USUARIOS).forEach(k=>{
+    localStorage.removeItem(SK+k);
+    localStorage.removeItem(SK+'data_'+k);
+  });
+  renderMonitor();
+}
+</script>
+
+<!--
+================================================================
+INSTRUCCIONES — GOOGLE SHEETS (para Alejandro)
+================================================================
+1. Crea una hoja en Google Sheets con estas columnas en fila 1:
+   nombre | usuario | fecha | hora | score_pct | correctas | total | nivel |
+   opera_pct | difusores_pct | cliente_pct | sistemas_pct | incentivos_pct
+
+2. Ve a Extensiones → Apps Script → borra todo → pega:
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    data.nombre, data.usuario, data.fecha, data.hora,
+    data.score_pct, data.correctas, data.total, data.nivel,
+    data.opera_pct, data.difusores_pct, data.cliente_pct,
+    data.sistemas_pct, data.incentivos_pct
+  ]);
+  return ContentService.createTextOutput('ok');
+}
+
+3. Guardar → Implementar → Nueva implementación:
+   · Tipo: Aplicación web
+   · Ejecutar como: Yo
+   · Acceso: Cualquier persona
+   · Implementar → Autorizar → Copiar URL
+
+4. Pegar URL en la variable SHEETS_URL al inicio del script.
+
+================================================================
+INSTRUCCIONES — GITHUB + RENDER
+================================================================
+1. Ve a github.com y crea un nuevo repositorio:
+   Nombre sugerido: aromatex-diagnostico
+   Visibilidad: Public
+   (sin README, sin .gitignore)
+
+2. En el repo nuevo, haz clic en "Add file" → "Upload files"
+   Sube este archivo como: index.html
+   Commit changes
+
+3. Ve a render.com → New → Static Site
+   Connect repository → selecciona aromatex-diagnostico
+   · Name: aromatex-diagnostico
+   · Branch: main
+   · Root directory: (vacío)
+   · Build command: (vacío)
+   · Publish directory: .
+   → Create Static Site
+
+4. En 1-2 minutos tendrás tu link:
+   https://aromatex-diagnostico.onrender.com
+
+5. Para actualizar el archivo en el futuro:
+   GitHub → repositorio → index.html → ícono de lápiz → edita → Commit
+   Render se actualiza automáticamente.
+
+================================================================
+CONTRASEÑAS PERSONALES
+================================================================
+Damariz Romero  → DamarizRM
+Janeth Sauceda  → JanethSM
+Xiadani Garcia  → XiadaniGC
+Katya Gomez     → KatyaGC
+Angelica Uribe  → AngelicaUC
+Magnali Miranda → MagnaliMQ
+Rubi Montoya    → RubiBDR
+================================================================
+-->
+
+<!-- MONITOR ADMIN -->
+<div id="pantalla-monitor" style="display:none;min-height:100vh;padding:48px 24px;">
+  <div style="max-width:960px;margin:0 auto;">
+
+    <!-- Header monitor -->
+    <div style="background:var(--verde);border-radius:16px;padding:28px 36px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--oro-s);margin-bottom:6px;">Panel de administración</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--crema);">Monitor de resultados · Diagnóstico 2026</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="renderMonitor()" style="padding:10px 20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:var(--crema);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">↻ Actualizar</button>
+        <button onclick="limpiarMonitor()" style="padding:10px 20px;background:rgba(192,57,43,0.4);border:1px solid rgba(192,57,43,0.5);border-radius:8px;color:var(--crema);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">🗑 Limpiar datos</button>
+      </div>
+    </div>
+
+    <!-- Resumen -->
+    <div id="mon-resumen"></div>
+
+    <!-- Tabla -->
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--verde);margin-bottom:14px;">Resultados individuales</div>
+    <div style="font-size:11px;color:var(--texto-s);margin-bottom:16px;">⚙️=Cómo opera · 📡=Difusores · 🎯=Cliente ideal · 🖥️=Sistemas · 💰=Incentivos</div>
+    <div id="mon-tabla"></div>
+
+    <div style="margin-top:28px;padding:16px 20px;background:rgba(26,74,53,0.06);border-radius:10px;font-size:12px;color:var(--texto-s);line-height:1.6;">
+      <strong>Nota:</strong> Los resultados se almacenan localmente en este navegador. Para ver resultados de otras computadoras, configura Google Sheets con el Apps Script incluido en el código del archivo HTML. El botón "Limpiar datos" borra los registros de este navegador únicamente.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
